@@ -7,10 +7,6 @@
 }
 .bg-top{
   width: 100%;
-  height: 10rem;
-}
-.notice-page{
-  position: absolute;
-  top: 0;
-  margin: auto 0;
+  height: 4rem;
+  background-color: orange;
 }
