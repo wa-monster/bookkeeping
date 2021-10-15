@@ -1,9 +1,11 @@
-import React from 'react'
+import React,{FC} from 'react'
+import { NoticePageType } from '../../type/layout'
 
-export default function NoticePage() {
+const NoticePage:FC<NoticePageType> = () =>{
   return (
-    <div>
-      
+    <div className="">
+
     </div>
   )
 }
+export default NoticePage 
