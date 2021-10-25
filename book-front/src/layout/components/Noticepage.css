@@ -6,6 +6,7 @@
   bottom: 0;
   margin: .5rem auto 0;
   width: 10rem;
+  min-width:800px;
 }
 .tab-box{
   background-color: #ffe;
