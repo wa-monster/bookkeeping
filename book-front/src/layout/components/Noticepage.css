@@ -11,3 +11,6 @@
 .tab-box{
   background-color: #ffe;
 }
+.tab-box .ant-tabs-tabpane{
+  padding: .3rem;
+}

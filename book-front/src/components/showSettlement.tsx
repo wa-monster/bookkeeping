@@ -3,6 +3,7 @@ import {ShowSettlementType} from '../type/components'
 import { Button } from 'antd';
 import DetailBox from './DetailBox'
 import EchartsBox from './EchartsBox'
+import './ShowSettlement.css'
 const useSettlement:FC<ShowSettlementType> = ()=>{
   const [income] = useState(0)
   const [pay] = useState(0)
@@ -22,7 +23,7 @@ const useSettlement:FC<ShowSettlementType> = ()=>{
   }
   return (
     <>
-      <div>收支统计</div>
+      <div className="reve-expend-title">收支统计</div>
       <div>
         <div>收入{income}</div>
         <div>支出{pay}</div>
