@@ -4,7 +4,7 @@
 
 # 技术栈
 
-前端 electron + (react || vue3)
+前端 electron=>quasar + (react || vue3)
 后端 nodejs=>nest.js
 
 以后想使用的技术：go
