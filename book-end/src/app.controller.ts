@@ -3,9 +3,7 @@ import { AppService } from './app.service';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {
-    console.log('123');
-  }
+  constructor(private readonly appService: AppService) {}
 
   @Get()
   getHello(): string {
