@@ -26,6 +26,13 @@ export class UserController {
   findAll2() {
     return 'i am v2';
   }
+  @Get('findError')
+  @Version([VERSION_NEUTRAL, '1'])
+  findAll3() {
+    const a: any = {}
+    console.log(a.b.c)
+    return this.userService.findAll();
+  }
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.userService.findOne(+id);

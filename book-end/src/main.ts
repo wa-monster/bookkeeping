@@ -1,6 +1,10 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './common/interceptors/transform.interceptor'
+
+import { AllExceptionsFilter } from './common/exceptions/base.exceptions.filer'
+
+import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter'
 // 换成Fastify框架
 import {
   FastifyAdapter,
@@ -12,7 +16,9 @@ async function bootstrap() {
     AppModule,
     new FastifyAdapter()
   );
-  app.useGlobalInterceptors(new TransformInterceptor)
+  app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionsFilter())
+
+  app.useGlobalInterceptors(new TransformInterceptor())
   // 接口版本化管理
   // 可以全局配置请求控制
   app.enableVersioning({
