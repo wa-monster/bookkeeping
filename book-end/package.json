@@ -30,6 +30,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/platform-fastify": "^9.0.8",
     "@nestjs/swagger": "^6.0.5",
+    "axios": "^0.27.2",
     "cross-env": "^7.0.3",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",

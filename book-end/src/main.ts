@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { TransformInterceptor } from './common/interceptors/transform.interceptor'
-import { AllExceptionsFilter } from './common/exceptions/base.exceptions.filer'
-import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter'
+import { TransformInterceptor } from './common/interceptors/transform.interceptor';
+import { AllExceptionsFilter } from './common/exceptions/base.exceptions.filer';
+import { HttpExceptionsFilter } from './common/exceptions/http.exceptions.filter';
 
 // 换成Fastify框架
 import {
@@ -10,26 +10,25 @@ import {
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { VersioningType, VERSION_NEUTRAL } from '@nestjs/common';
-import { generateDocument } from './doc'
+import { generateDocument } from './doc';
 
 declare const module: any;
 
 async function bootstrap() {
-
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
-    new FastifyAdapter()
+    new FastifyAdapter(),
   );
-  app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionsFilter())
+  app.useGlobalFilters(new AllExceptionsFilter(), new HttpExceptionsFilter());
 
-  app.useGlobalInterceptors(new TransformInterceptor())
+  app.useGlobalInterceptors(new TransformInterceptor());
   // 接口版本化管理
   // 可以全局配置请求控制
   app.enableVersioning({
     defaultVersion: [VERSION_NEUTRAL, '1', '2'],
-    type: VersioningType.URI
-  })
-  generateDocument(app)
+    type: VersioningType.URI,
+  });
+  generateDocument(app);
   if (module.hot) {
     module.hot.accept();
     module.hot.dispose(() => app.close());
