@@ -1,8 +1,6 @@
 import { parse } from 'yaml';
-const path = require('path');
-const fs = require('fs');
-// import path from 'path'
-// import fs from 'fs'
+import * as path from 'path'
+import * as fs from 'fs';
 
 export const getEnv = () => {
   return process.env.RUNNING_ENV;

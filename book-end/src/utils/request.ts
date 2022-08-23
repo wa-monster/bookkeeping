@@ -1,7 +1,5 @@
 import axios, { Method } from 'axios';
 import { getConfig } from '@/utils';
-import { send } from 'process';
-
 const { FEISHU_CONFIG: { FEISHU_URL } } = getConfig();
 
 /**
