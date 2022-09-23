@@ -7,7 +7,7 @@ const { MYSQL_CONFIG } = getConfig()
 const MYSQL_DATABASE_CONFIG = {
   ...MYSQL_CONFIG,
   type: databaseType,
-  entities: [path.join(__dirname, `../../**/*.${MYSQL_CONFIG.entities}.entity{.ts,.js}`)],
+  entities: [path.join(__dirname, `../../**/*.${MYSQL_CONFIG.entities}.entity{.ts}`)],
 }
 
 const MYSQL_DATA_SOURCE = new DataSource(MYSQL_DATABASE_CONFIG)

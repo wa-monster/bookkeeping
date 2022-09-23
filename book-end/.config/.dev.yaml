@@ -19,7 +19,7 @@ MONGODB_CONFIG:
 MYSQL_CONFIG:
   name: 'mysql'
   type: 'mysql'
-  host: 'http://118.89.107.1'
+  host: '118.89.107.19'
   port: 3306
   username: 'money_note'
   password: ''

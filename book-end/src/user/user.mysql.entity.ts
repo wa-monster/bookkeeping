@@ -1,4 +1,5 @@
-import { Entity, Column, UpdateManyOptions, ObjectIdColumn } from 'typeorm'
+import { Entity, Column, ObjectIdColumn } from 'typeorm'
+
 
 @Entity()
 export class User {
