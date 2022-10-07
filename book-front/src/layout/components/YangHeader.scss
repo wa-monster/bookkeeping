@@ -1,14 +1,16 @@
-.header-box{
-  width: 100%;
+.header-box {
+  box-sizing: border-box;
+  padding: 10px;
+  margin: 0 auto;
+  width: 800px;
   height: 50px;
   background-color: line;
 }
-.header-content{
+.header-content {
   box-sizing: border-box;
   padding: 0 1rem;
   display: flex;
   justify-content: space-between;
 }
-.person-info{
-  
+.person-info {
 }
