@@ -9,12 +9,8 @@ function App() {
       <YangHeader></YangHeader>
       <div className="main-content">
         <div className="bg-top"></div>
-        {/* <div className="notice-page">
-
-        </div> */}
         <NoticePage className="notice-page"></NoticePage>
       </div>
-
     </div>
   );
 }

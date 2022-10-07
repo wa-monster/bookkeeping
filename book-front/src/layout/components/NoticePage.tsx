@@ -3,7 +3,7 @@ import { Tabs } from 'antd';
 import { NoticePageType } from '../../type/layout'
 import ShowSettlement from '../../components/ShowSettlement'
 import './NoticePage.css'
-import {TabPanekey} from '../../until/enum'
+import { TabPanekey } from '../../until/enum'
 const { TabPane } = Tabs;
 
 const NoticePage:FC<NoticePageType> = () =>{

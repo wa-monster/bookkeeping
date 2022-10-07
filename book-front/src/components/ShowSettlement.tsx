@@ -40,9 +40,9 @@ const useSettlement:FC<ShowSettlementType> = ()=>{
         <Button onClick={lookDetail}>{isDetail ? '详情':'图表'}</Button> 
       </div>
       {isDetail ?
-        EchartsBox
+        <EchartsBox></EchartsBox>
         :
-        DetailBox
+        <DetailBox></DetailBox>
       }
     </>
   )
