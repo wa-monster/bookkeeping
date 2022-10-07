@@ -7,7 +7,8 @@ import AddItem from './SettlementComponent/AddItem'
 import './ShowSettlement.scss'
 
 import {money} from '../utils/filter'
-const useSettlement:FC<ShowSettlementType> = ()=>{
+import { useEffect } from 'react';
+const useSettlement:FC<ShowSettlementType> = (props)=>{
   const [income] = useState(0)
   const [pay] = useState(0)
   const [toal] = useState(0)
@@ -25,6 +26,14 @@ const useSettlement:FC<ShowSettlementType> = ()=>{
     setDetail(!isDetail)
   }
 
+  useEffect(()=>{
+    console.log('22222222');
+    console.log('props',props.keyIndex);
+    
+  },[])
+  const getData = ()=>{
+    
+  }
   return (
     <div className="show-settlement">
       <div className="reve-expend-title">收支统计</div>

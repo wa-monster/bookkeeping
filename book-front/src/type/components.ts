@@ -1,6 +1,6 @@
 import AddItem from '../components/SettlementComponent/AddItem';
 export interface ShowSettlementType {
-  key: number
+  keyIndex: number
 }
 
 export interface AddItemType {

@@ -12,16 +12,16 @@ const NoticePage:FC<NoticePageType> = () =>{
       <div className="tab-box">
         <Tabs tabPosition="left">
           <TabPane tab="天" key={TabPanekey.day}>
-            <ShowSettlement key={TabPanekey.day} />
+            <ShowSettlement keyIndex={TabPanekey.day} />
           </TabPane>
           <TabPane tab="周" key={TabPanekey.week}>
-            <ShowSettlement key={TabPanekey.week}/>
+            <ShowSettlement keyIndex={TabPanekey.week}/>
           </TabPane>
           <TabPane tab="月" key={TabPanekey.mouth}>
-            <ShowSettlement key={TabPanekey.mouth}/>
+            <ShowSettlement keyIndex={TabPanekey.mouth}/>
           </TabPane>
           <TabPane tab="年" key={TabPanekey.year}>
-            <ShowSettlement key={TabPanekey.year}/>
+            <ShowSettlement keyIndex={TabPanekey.year}/>
           </TabPane>
         </Tabs>
       </div>
