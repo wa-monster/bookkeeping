@@ -11,6 +11,12 @@
   padding: 0 1rem;
   display: flex;
   justify-content: space-between;
+  h1{
+    font-size: 20px;
+    background: linear-gradient(to right bottom, #ffd5ba, #9c6107);
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
 }
 .person-info {
 }

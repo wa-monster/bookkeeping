@@ -1,9 +1,12 @@
 import React,{useState,FC} from 'react'
 import {ShowSettlementType} from '../type/components'
-import { Button } from 'antd';
-import DetailBox from './DetailBox'
-import EchartsBox from './EchartsBox'
-import './ShowSettlement.css'
+import { Button  } from 'antd';
+import DetailBox from './SettlementComponent/DetailBox'
+import EchartsBox from './SettlementComponent/EchartsBox'
+import AddItem from './SettlementComponent/AddItem'
+import './ShowSettlement.scss'
+
+import {money} from '../utils/filter'
 const useSettlement:FC<ShowSettlementType> = ()=>{
   const [income] = useState(0)
   const [pay] = useState(0)
@@ -21,30 +24,43 @@ const useSettlement:FC<ShowSettlementType> = ()=>{
   const lookDetail = ()=>{
     setDetail(!isDetail)
   }
+
   return (
-    <>
+    <div className="show-settlement">
       <div className="reve-expend-title">收支统计</div>
-      <div>
-        <div>收入{income}</div>
-        <div>支出{pay}</div>
-        <div>总计{toal}</div>
+      <div className='reve-expend-content'>
+        <div className='reve-expend-content-item'>
+          <div>收入</div> 
+          <div className='income'>{money(income)}</div>
+        </div>
+        <div className='reve-expend-content-item'>
+          <div>支出</div> 
+          <div className='pay'>{money(pay)}</div>
+        </div>
+        <div className='reve-expend-content-item'>
+          <div>总计</div> 
+          <div>{money(toal)}</div>
+        </div>
       </div>
       <div className="add">
         {isShowAdd ?
-          <div>
-            <div onClick={closeIncome}>关闭</div>
-          </div>
+          <Button onClick={closeIncome}>关闭</Button>
           :
-          <Button onClick={addIncome}>添加新流水</Button> 
+          <Button onClick={addIncome}>新增</Button> 
         }
-        <Button onClick={lookDetail}>{isDetail ? '详情':'图表'}</Button> 
       </div>
+      {isShowAdd ?
+        <AddItem closeIncome={closeIncome}></AddItem>
+        :
+        null
+      }
+      <Button onClick={lookDetail}>{isDetail ? '详情':'图表'}</Button> 
       {isDetail ?
         <EchartsBox></EchartsBox>
         :
         <DetailBox></DetailBox>
       }
-    </>
+    </div>
   )
 }
 export default useSettlement

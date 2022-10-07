@@ -3,7 +3,7 @@ import React from 'react'
 const DetailBox = ()=> {
   return (
     <div className="detail-box">
-      <div></div>
+      <div>详情</div>
     </div>
   )
 }

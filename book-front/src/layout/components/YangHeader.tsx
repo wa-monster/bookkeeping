@@ -11,7 +11,7 @@ const YangHeader =  () => {
       <div className="header-content">
         <h1>杨大爷记账</h1>
         <Dropdown.Button overlay={MenuDown} placement="bottomCenter" icon={<UserOutlined />}>
-          Dropdown
+          用户
         </Dropdown.Button>
       </div>
     </div>
