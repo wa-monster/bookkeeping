@@ -1,45 +1,48 @@
 import React,{ useState,FC } from 'react'
 import { AddItemType } from '@/type/components'
-import { Select , Form, InputNumber, Button } from 'antd';
+import { DatePicker,DatePickerProps , Form, InputNumber, Button } from 'antd';
+import moment from 'moment'
 import  './AddItem.scss'
 const AddItem:FC<AddItemType> = (props)=>{
   const [form] = Form.useForm();
-  const moneyOption =[
-    {
-      label:'餐饮',
-      value:1
-    },
-    {
-      label:'住宿',
-      value:2
-    },
-    {
-      label:'游戏',
-      value:3
-    },
-  ]
-  const { Option } = Select;
-  const optionChildren:React.ReactNode[] = []
-  moneyOption.forEach(v=>{
-    optionChildren.push(<Option value={v.value} key={v.value}>{v.label}</Option>) 
-  })
   const onFinish = ()=>{
     props.closeIncome()
   }
+
+  const onChange: DatePickerProps['onChange'] = (date, dateString)=>{
+
+  }
   return (
-    <Form className='add-form' form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
-          <Form.Item label="类型">
-            <Select
-              style={{ width: 120 }}
-            >
-              {optionChildren}
-            </Select>
+    <Form 
+      className='add-form' 
+      form={form} 
+      name="horizontal_login" 
+      layout="inline" 
+      onFinish={onFinish}
+      initialValues={{
+        date:moment('2022-05','YYYY-MM'),
+        money:0
+      }}
+    >
+          <Form.Item name="date" label="日期">
+            <DatePicker onChange={onChange} picker="month" format="YYYY-MM"/>
           </Form.Item>
           <Form.Item
             name="money"
             label="数目"
+            getValueFromEvent={(...args: any[]) => {
+              console.log(args);
+              if(!args[0]){
+                return 0
+              }else{
+                return +(''+args[0]).replace(/^(\-)*(\d+)\.(\d\d).*$/, '$1$2.$3'); // 只能输入两位小数
+              }
+            }}
           >
-            <InputNumber prefix="￥" style={{ width: '100%' }} />
+            <InputNumber
+              prefix="￥" 
+              style={{ width: '100%' }} 
+            />
           </Form.Item>
           <Form.Item>
             <Button type="primary" htmlType="submit">确定</Button>

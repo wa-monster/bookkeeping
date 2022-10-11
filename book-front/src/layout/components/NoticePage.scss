@@ -7,10 +7,17 @@
   margin: .5rem auto 0;
   width: 10rem;
   min-width:800px;
-}
-.tab-box{
-  background-color: #fff;
-}
-.tab-box .ant-tabs-tabpane{
-  padding: .3rem;
+  .tab-box{
+    background-color: #fff;
+    height: 100%;
+  }
+  .tab-box .ant-tabs-tabpane{
+    padding: .3rem;
+  }
+  .ant-tabs {
+    height: 100%;
+  }
+  .ant-tabs-content{
+    height: 100%;
+  }
 }
