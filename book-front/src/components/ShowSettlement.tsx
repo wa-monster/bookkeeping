@@ -1,5 +1,4 @@
 import React,{useState,FC} from 'react'
-import {ShowSettlementType} from '../type/components'
 import { Button  } from 'antd';
 import DetailBox from './SettlementComponent/DetailBox'
 import EchartsBox from './SettlementComponent/EchartsBox'
@@ -20,20 +19,25 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   const closeIncome = ()=>{
     setIsShowAdd(false)
   }
+  const saveIncome = (form:addFormObjType) => {
+    console.log('form',form);
+    
+    closeIncome()
+  }
   // 
   const [isDetail,setDetail] = useState(false)
   const lookDetail = ()=>{
     setDetail(!isDetail)
   }
 
-  useEffect(()=>{
-    console.log('22222222');
-    console.log('props',props.keyIndex);
+  // useEffect(()=>{
+  //   console.log('props',props.keyIndex);
     
-  },[])
+  // },[])
   const getData = ()=>{
     
   }
+
   return (
     <div className="show-settlement">
       <div className="reve-expend-title">收支统计</div>
@@ -59,7 +63,7 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
         }
       </div>
       {isShowAdd ?
-        <AddItem closeIncome={closeIncome}></AddItem>
+        <AddItem saveIncome={saveIncome}></AddItem>
         :
         null
       }

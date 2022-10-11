@@ -1,5 +1,13 @@
-.add-form{
+.add-form-box{
   margin: 15px 0;
   padding: 10px 10px 10px 0;
   border-bottom: 1px solid #ccc;
+  overflow: hidden;
+}
+.add-form{
+  width: 300px;
+ 
+}
+.ant-input-number-handler-wrap{
+  display: none;
 }
