@@ -2,7 +2,7 @@
   "name": "book-front",
   "version": "0.1.0",
   "private": true,
-  "main": "main.js",
+  "main": "main/main.js",
   "author": "wa-monster",
   "description": "练个手",
   "homepage": ".",
@@ -71,10 +71,11 @@
     },
     "files": [
       "./build/**/*",
-      "./main.js",
+      "./main/main.js",
       "./package.json"
     ],
     "win": {
+      "icon":"happy.ico",
       "target": [
         "nsis",
         "msi"

@@ -2,6 +2,7 @@
 
 
 const { app, BrowserWindow, Tray, Menu } = require('electron')
+const url = require('url')
 const path = require('path')
 
 // const baseUrl = '../public'
@@ -11,13 +12,18 @@ function createWindow () {
     width: 900,
     height: 700,
     webPreferences: {
+      webSecurity:false,
       nodeIntegration: true,
       // preload: path.join(__dirname, 'preload.js')
     },
     autoHideMenuBar: true
   })
   // 加载 index.html
-  mainWindow.loadFile(path.join(__dirname, `${baseUrl}/index.html`))
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, '../build/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
   // mainWindow.loadURL('http://localhost:3000/');
   initAddBack(mainWindow)
 }

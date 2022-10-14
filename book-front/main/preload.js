@@ -1,7 +1,8 @@
-import { ipcMain } from 'electron';
-import fs from 'fs'
-import path from 'path'
-ipcMain.on('saveMoneyData', function(event, arg, url) {
+const fs = require( 'fs');
+const path = require( 'path');
+const electron = require('electron');
+
+electron.ipcMain.on('saveMoneyData', function(event, arg, url) {
   // arg是从渲染进程返回来的数据
   fs.writeFile(path.join(__dirname, url),JSON.stringify(arg), "utf8", (err)=>{
     // 通过event.sender.send给渲染进程传递数据
