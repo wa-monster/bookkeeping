@@ -1,12 +1,17 @@
 // main.js
 
 
-const { app, BrowserWindow, Tray, Menu } = require('electron')
+const { app, BrowserWindow, Tray, Menu,ipcMain } = require('electron')
 const url = require('url')
 const path = require('path')
-
-// const baseUrl = '../public'
-const baseUrl = '../build'
+const isDev= require('electron-is-dev')
+let baseUrl 
+if(isDev){
+  baseUrl = '../public'
+}else{
+  baseUrl = '../build'
+}
+// 
 function createWindow () {
   const mainWindow = new BrowserWindow({
     width: 900,
@@ -14,18 +19,24 @@ function createWindow () {
     webPreferences: {
       webSecurity:false,
       nodeIntegration: true,
-      // preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload.js')
     },
     autoHideMenuBar: true
   })
-  // 加载 index.html
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, '../build/index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
-  // mainWindow.loadURL('http://localhost:3000/');
+  if(isDev){
+    mainWindow.loadURL('http://localhost:3000/');
+  }else{
+    // 加载 index.html
+    mainWindow.loadURL(url.format({
+      pathname: path.join(__dirname, '../build/index.html'),
+      protocol: 'file:',
+      slashes: true
+    }))
+  }
+  
   initAddBack(mainWindow)
+
+  initIpcMain()
 }
 
 function initAddBack(mainWindow){
@@ -64,3 +75,10 @@ app.whenReady().then(() => {
     if (process.platform !== 'darwin') app.quit()
   })
 })
+
+function initIpcMain(){
+  ipcMain.on('hello',(event,str)=>{
+    console.log('str',str);
+  })
+}
+

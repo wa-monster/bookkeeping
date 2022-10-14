@@ -1,8 +1,8 @@
 import React from 'react'
-import {  Dropdown } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+// import {  Dropdown } from 'antd';
+// import { UserOutlined } from '@ant-design/icons';
 import './YangHeader.scss'
-import MenuDown from './MenuDown'
+// import MenuDown from './MenuDown'
 
 const YangHeader =  () => {
 
@@ -10,9 +10,9 @@ const YangHeader =  () => {
     <div className="header-box">
       <div className="header-content">
         <h1>杨大爷资产统计</h1>
-        <Dropdown.Button overlay={MenuDown} placement="bottomCenter" icon={<UserOutlined />}>
+        {/* <Dropdown.Button overlay={MenuDown} placement="bottomCenter" icon={<UserOutlined />}>
           用户
-        </Dropdown.Button>
+        </Dropdown.Button> */}
       </div>
     </div>
   )
