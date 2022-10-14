@@ -5,6 +5,7 @@ const { app, BrowserWindow, Tray, Menu,ipcMain } = require('electron')
 const url = require('url')
 const path = require('path')
 const isDev= require('electron-is-dev')
+const fs = require('fs')
 let baseUrl 
 if(isDev){
   baseUrl = '../public'
@@ -79,6 +80,17 @@ app.whenReady().then(() => {
 function initIpcMain(){
   ipcMain.on('hello',(event,str)=>{
     console.log('str',str);
+    const obj = {
+      date:'2022-02'
+    }
+    const timeyear = ""+obj.date.split('-')[0]
+    fs.writeFile(path.join(__dirname, `/data/${timeyear}.txt`),JSON.stringify(obj),(error)=>{
+      if(error){
+        console.log(error);
+        return false;
+      }
+      console.log('写入成功');
+    })
   })
 }
 

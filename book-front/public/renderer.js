@@ -1,1 +1,1 @@
-window.test.hello()
+

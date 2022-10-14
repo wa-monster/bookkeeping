@@ -6,6 +6,7 @@ import { FormProps } from 'rc-field-form';
 const AddItem:FC<AddItemType> = (props)=>{
   const [form] = Form.useForm();
   const onFinish:FormProps['onFinish'] = (values)=>{
+    values.date = moment(values.date , 'YYYY-MM');
     console.log('form',values);
     
     props.saveIncome(values)

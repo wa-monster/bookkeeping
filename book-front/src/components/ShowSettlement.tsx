@@ -21,7 +21,7 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   }
   const saveIncome = (form:addFormObjType) => {
     console.log('form',form);
-    
+    (window.test as any).hello() 
     closeIncome()
   }
   // 
