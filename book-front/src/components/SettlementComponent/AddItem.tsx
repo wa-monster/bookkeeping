@@ -34,6 +34,10 @@ const AddItem:FC<AddItemType> = (props)=>{
     {
       label:'基金',
       value:5
+    },
+    {
+      label:'借钱',
+      value:6
     }
   ]
   const { Option } = Select;
