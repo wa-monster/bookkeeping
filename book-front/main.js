@@ -3,6 +3,7 @@
 
 const { app, BrowserWindow } = require('electron')
 const path = require('path')
+const url = require('url')
 function createWindow () {
 
   const mainWindow = new BrowserWindow({
@@ -14,8 +15,13 @@ function createWindow () {
     autoHideMenuBar: true
   })
   // 加载 index.html
-  // mainWindow.loadFile('index.html')
-  mainWindow.loadURL('http://localhost:3000/');
+  mainWindow.loadURL(url.format({
+    pathname: path.join(__dirname, './build/index.html'),
+    protocol: 'file:',
+    slashes: true
+  }))
+  
+  // mainWindow.loadURL('http://localhost:3000/');
 }
 
 
