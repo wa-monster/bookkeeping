@@ -6,10 +6,12 @@ import { FormProps } from 'rc-field-form';
 const AddItem:FC<AddItemType> = (props)=>{
   const [form] = Form.useForm();
   const onFinish:FormProps['onFinish'] = (values)=>{
-    values.date = moment(values.date , 'YYYY-MM');
-    console.log('form',values);
-    
-    props.saveIncome(values)
+    const formData = {
+      ...values
+    }
+    formData.date = moment(formData.date).format('YYYY-MM');
+    console.log('formData',formData);
+    props.saveIncome(formData)
   }
 
   const onChange: DatePickerProps['onChange'] = (date, dateString)=>{
@@ -71,7 +73,6 @@ const AddItem:FC<AddItemType> = (props)=>{
           name="money"
           label="余额"
           getValueFromEvent={(...args: any[]) => {
-            console.log(args);
             if(!args[0]){
               return 0
             }else{

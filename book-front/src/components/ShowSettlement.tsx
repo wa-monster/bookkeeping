@@ -1,16 +1,15 @@
-import React,{useState,FC} from 'react'
-import { Button  } from 'antd';
+import React,{useState,FC,useEffect} from 'react'
+import { Button,DatePicker,DatePickerProps } from 'antd';
 import DetailBox from './SettlementComponent/DetailBox'
 import EchartsBox from './SettlementComponent/EchartsBox'
 import AddItem from './SettlementComponent/AddItem'
 import './ShowSettlement.scss'
-
+import moment from 'moment'
 import {money} from '../utils/filter'
-import { useEffect } from 'react';
 const useSettlement:FC<ShowSettlementType> = (props)=>{
-  const [income] = useState(0)
-  const [pay] = useState(0)
-  const [toal] = useState(0)
+  const [income,setIncome] = useState(0)
+  const [pay,setPay] = useState(0)
+  const [total,setTotal] = useState(0)
   // 
   const [isShowAdd,setIsShowAdd] = useState(false)
   const addIncome = ()=>{
@@ -19,25 +18,30 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   const closeIncome = ()=>{
     setIsShowAdd(false)
   }
-  const saveIncome = (form:addFormObjType) => {
-    console.log('form',form);
-    (window.test as any).hello() 
-    closeIncome()
+  const saveIncome = (values:addFormObjType) => {
+    window.saveData.addItem(JSON.stringify(values));
+    window.addItemSuccess = ()=> {
+      getTotal()
+      closeIncome()
+    }
   }
   // 
-  const [isDetail,setDetail] = useState(false)
-  const lookDetail = ()=>{
-    setDetail(!isDetail)
-  }
+  // const [isDetail,setDetail] = useState(false)
+  // const lookDetail = ()=>{
+  //   setDetail(!isDetail)
+  // }
 
-  // useEffect(()=>{
-  //   console.log('props',props.keyIndex);
-    
-  // },[])
-  const getData = ()=>{
-    
+  // const [listDateStr,setListDate] = useState(moment().format('YYYY'))
+  const getTotal = ()=>{
+    window.getData.getTotal();
+    // 拿到数据回调
+    window.getTotalSuccess = (res:any)=> {
+      
+    }
   }
-
+  useEffect(() => {
+  }, [])
+  
   return (
     <div className="show-settlement">
       <div className="reve-expend-title">收支统计</div>
@@ -52,9 +56,16 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
         </div>
         <div className='reve-expend-content-item'>
           <div>总计</div> 
-          <div>{money(toal)}</div>
+          <div>{money(total)}</div>
         </div>
       </div>
+      {/* <div style={{"margin":"20px 0"}}>
+        <DatePicker 
+          defaultValue={moment()}
+          onChange={(...[,dataString]:[value: moment.Moment | null, dateString: string])=>setListDate(dataString)} 
+          picker="year" 
+        />
+      </div> */}
       <div className="add">
         {isShowAdd ?
           <Button onClick={closeIncome}>关闭</Button>
@@ -67,12 +78,12 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
         :
         null
       }
-      <Button onClick={lookDetail}>{isDetail ? '详情':'图表'}</Button> 
+      {/* <Button onClick={lookDetail}>{isDetail ? '详情':'图表'}</Button> 
       {isDetail ?
         <EchartsBox></EchartsBox>
         :
         <DetailBox></DetailBox>
-      }
+      } */}
     </div>
   )
 }

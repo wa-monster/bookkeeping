@@ -9,6 +9,6 @@ const {
 module.exports = override(
   addDecoratorsLegacy(),
   addWebpackAlias({
-    '@': path.resolve(__dirname, 'src'),
+    'src': path.resolve(__dirname, 'src'),
   })
 )

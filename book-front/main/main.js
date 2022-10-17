@@ -5,7 +5,13 @@ const { app, BrowserWindow, Tray, Menu,ipcMain } = require('electron')
 const url = require('url')
 const path = require('path')
 const isDev= require('electron-is-dev')
-const fs = require('fs')
+const fs = require(fs)
+const {
+  isExists,
+  writeData,
+  readData
+} = require('./fileUntil')
+
 let baseUrl 
 if(isDev){
   baseUrl = '../public'
@@ -78,18 +84,81 @@ app.whenReady().then(() => {
 })
 
 function initIpcMain(){
-  ipcMain.on('hello',(event,str)=>{
-    console.log('str',str);
-    const obj = {
-      date:'2022-02'
-    }
-    const timeyear = ""+obj.date.split('-')[0]
-    fs.writeFile(path.join(__dirname, `/data/${timeyear}.txt`),JSON.stringify(obj),(error)=>{
-      if(error){
-        console.log(error);
-        return false;
+  ipcMain.on('addItem',(event,str)=>{
+    const obj = JSON.parse(str)
+    const {date,type} = obj
+    const timeyear = "" + date.split('-')[0]
+    const url = path.join(__dirname, `/data/${timeyear}.txt`)
+    isExists(url,(err)=>{
+      if(err){
+        console.log(err);
+        const data = {
+          [date]: {
+            [type]:obj
+          }
+        }
+        writeData(url,JSON.stringify(data), event,'sendAddItemRes').then(res=>{
+          if(res === '成功'){
+            event.sender.send('sendAddItemRes','200');
+          }
+        })
+      }else{
+        readData(url,event,'sendAddItemRes')
+        .then(data=>{
+          const dataObj = JSON.parse(data)
+          dataObj[date][type] = obj
+          writeData(url,JSON.stringify(dataObj), event,'sendAddItemRes').then(res=>{
+            if(res === '成功'){
+              event.sender.send('sendAddItemRes','200');
+            }
+          })
+        })
       }
-      console.log('写入成功');
+    })
+  });
+  // 拿到数据
+  ipcMain.on('getAllByYear',(event,str)=>{
+    const url = path.join(__dirname, `/data/${str}.txt`)
+    readData(url,event,'sendGetDataRes')
+    .then(data=>{
+      const dataObj = JSON.parse(data)
+      var arr = Object.keys(dataObj).map(key=>{
+        return dataObj[key]
+      })
+      event.sender.send('sendGetDataRes',JSON.stringify(arr));
+    })
+  })
+  // 拿到数据
+  ipcMain.on('getAllByYear',(event,str)=>{
+    const url = path.join(__dirname, `/data/${str}.txt`)
+    readData(url,event,'sendGetDataRes')
+    .then(data=>{
+      const dataObj = JSON.parse(data)
+      var arr = Object.keys(dataObj).map(key=>{
+        return dataObj[key]
+      })
+      event.sender.send('sendGetDataRes',JSON.stringify(arr));
+    })
+  })
+  // 拿到最新的总数据
+  ipcMain.on('getAllByYear',(event,str)=>{
+    const url = path.join(__dirname, `/data`)
+    const files = fs.readdirSync(url)
+    let newDataName = 0
+    files.forEach(file => { 
+      if (path.extname(file) === ".txt") 
+        console.log(file);
+        const num = Number(file.substring(0,file.indexOf('.')))
+        newDataName = num > newDataName ?  num : newDataName
+    })
+    const fileUrl = path.join(__dirname, `/data/${newDataName}.txt`)
+    readData(fileUrl,event,'sendGetTotalRes')
+    .then(data=>{
+      const dataObj = JSON.parse(data)
+      var arr = Object.keys(dataObj).map(key=>{
+        return dataObj[key]
+      })
+      event.sender.send('sendGetTotalRes',JSON.stringify(arr));
     })
   })
 }
