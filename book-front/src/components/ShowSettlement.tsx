@@ -51,10 +51,10 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   
   return (
     <div className="show-settlement">
-      <div className="reve-expend-title">收支统计</div>
+      <div className="reve-expend-title">统计</div>
       <div className='reve-expend-content'>
         <div className='reve-expend-content-item'>
-          <div>收入</div> 
+          <div>上次记录</div> 
           <div className='income'>{money(income)}</div>
         </div>
         <div className='reve-expend-content-item'>

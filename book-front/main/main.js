@@ -130,15 +130,36 @@ function initIpcMain(){
   })
   // 拿到数据
   ipcMain.on('getAllByYear',(event,str)=>{
-    const url = path.join(__dirname, `/data/${str}.txt`)
-    readData(url,event,'sendGetDataRes')
-    .then(data=>{
-      const dataObj = JSON.parse(data)
-      var arr = Object.keys(dataObj).map(key=>{
-        return dataObj[key]
-      })
-      event.sender.send('sendGetDataRes',JSON.stringify(arr));
+    const url = path.join(__dirname, `/data`)
+    const files = fs.readdirSync(url)
+    const arr = []
+    files.forEach(file => { 
+      if (path.extname(file) === ".txt") {
+        const fileName = Number(file.substring(0,file.indexOf('.')))
+        arr.push(fileName)
+      }
     })
+
+    // 函数调多少个不确定
+    // Promise.all([readData(1),readData(2),readData(3),readData(4)])
+    const txtArr = []
+    arr.forEach(name=>{
+      let urlFile = path.join(__dirname, `/data/${name}.txt`)
+      var data = fs.readFileSync(urlFile, 'utf-8');
+      txtArr.push({
+        [name]:data
+      })
+    })
+    event.sender.send('sendGetDataRes',JSON.stringify(arr));
+   
+    // readData(url,event,'sendGetDataRes')
+    // .then(data=>{
+    //   const dataObj = JSON.parse(data)
+    //   var arr = Object.keys(dataObj).map(key=>{
+    //     return dataObj[key]
+    //   })
+      
+    // })
   })
   // 拿到最新的总数据
   ipcMain.on('getTotal',(event,str)=>{
