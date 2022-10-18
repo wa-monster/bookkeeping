@@ -5,7 +5,7 @@ const { app, BrowserWindow, Tray, Menu,ipcMain } = require('electron')
 const url = require('url')
 const path = require('path')
 const isDev= require('electron-is-dev')
-const fs = require(fs)
+const fs = require('fs')
 const {
   isExists,
   writeData,
@@ -141,15 +141,15 @@ function initIpcMain(){
     })
   })
   // 拿到最新的总数据
-  ipcMain.on('getAllByYear',(event,str)=>{
+  ipcMain.on('getTotal',(event,str)=>{
     const url = path.join(__dirname, `/data`)
     const files = fs.readdirSync(url)
     let newDataName = 0
     files.forEach(file => { 
-      if (path.extname(file) === ".txt") 
-        console.log(file);
+      if (path.extname(file) === ".txt") {
         const num = Number(file.substring(0,file.indexOf('.')))
         newDataName = num > newDataName ?  num : newDataName
+      }
     })
     const fileUrl = path.join(__dirname, `/data/${newDataName}.txt`)
     readData(fileUrl,event,'sendGetTotalRes')

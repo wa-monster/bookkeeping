@@ -32,7 +32,8 @@ export const initElectronRes = () => {
     if ((+res) === 500) {
       resError()
     } else {
-      resSuccess()
+      // resSuccess()
+
       // 调用react 的函数
       window.getTotalSuccess(res)
       window.getDataSuccess = null;

@@ -33,13 +33,20 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
 
   // const [listDateStr,setListDate] = useState(moment().format('YYYY'))
   const getTotal = ()=>{
+    
     window.getData.getTotal();
     // 拿到数据回调
     window.getTotalSuccess = (res:any)=> {
-      
+      console.log('res',res);
+      const arr = JSON.parse(res)
+      const sum = arr.reduce((pre:number,cre:any)=>{
+        return pre+cre.money
+      },0)
+      setTotal(sum)
     }
   }
   useEffect(() => {
+    getTotal()
   }, [])
   
   return (
