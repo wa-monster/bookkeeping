@@ -1,1 +1,1 @@
-{"2022-10":{"date":"2022-10","type":1,"money":123},"2022-11":{"date":"2022-11","type":1,"money":2},"2022-09":{"date":"2022-09","type":1,"money":124}}
+{"2022-10":{"1":{"date":"2022-10","type":1,"money":123},"5":{"date":"2022-10","type":5,"money":124},"income":{"date":"2022-10","incomeType":"工资","money":33,"isIncome":true}}}

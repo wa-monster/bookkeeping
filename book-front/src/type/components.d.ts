@@ -1,18 +1,27 @@
+
 // 给window对象加electron暴露出来的一些api
 declare interface Window {
   addItemSuccess: any;
   getDataSuccess: any;
   getTotalSuccess: any;
+  addIncomeItemSuccess: any;
+  getPreDataSuccess: any;
   saveData: {
     addItem: any,
-    sendAddItemRes: any
+    addIncomeItem: any,
+
+    sendAddItemRes: any,
+    sendAddIncomeItemRes: any
   },
   getData: {
     getTotal: any,
+    sendGetTotalRes: any,
     getAllByYear: any,
     sendGetDataRes: any,
-    sendGetTotalRes: any,
+    getPreData: any,
+    sendPreData: any,
   },
+  [key: string]: any
 }
 
 declare interface ShowSettlementType {
@@ -20,10 +29,23 @@ declare interface ShowSettlementType {
 }
 
 declare interface AddItemType {
+  saveTotal: (addFormObjType) => void
+}
+
+declare interface AddIncomeItemType {
   saveIncome: (addFormObjType) => void
 }
+
 declare interface addFormObjType {
-  date: String,
-  money: Number
-  type: Number
+  date: string,
+  money: number,
+  type?: number,
+  incomeType?: string,
+  isIncome?: boolean
 }
+
+declare interface totalObj {
+  [key: string]: addFormObjType;
+}
+
+type allObjArr = totalObj[]

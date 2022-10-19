@@ -25,6 +25,7 @@ const readData = (url,event,targetFn)=>{
       // 读取成功 err为null
       // 读取失败 err为错误对象
       if (err){
+        console.log('err',url);
         console.log(err);
         if(targetFn){
          event.sender.send(targetFn,'500')

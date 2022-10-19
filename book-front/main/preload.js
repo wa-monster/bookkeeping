@@ -4,7 +4,9 @@ const { contextBridge, ipcRenderer } = require('electron')
 
 contextBridge.exposeInMainWorld('saveData', {
   addItem: (values) => ipcRenderer.send('addItem',values),
-  sendAddItemRes:(callback)=>{ipcRenderer.on('sendAddItemRes',callback)}
+  addIncomeItem: (values) => ipcRenderer.send('addIncomeItem',values),
+  sendAddItemRes:(callback)=>{ipcRenderer.on('sendAddItemRes',callback)},
+  sendAddIncomeItemRes:(callback)=>{ipcRenderer.on('sendAddIncomeItemRes',callback)}
 })
 contextBridge.exposeInMainWorld('getData', {
   getAllByYear: (values) => ipcRenderer.send('getAllByYear',values),

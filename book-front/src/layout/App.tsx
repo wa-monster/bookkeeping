@@ -7,10 +7,9 @@ import myContext from 'src/utils/context'
 function App() {
   const [List,setList] = useState({})
   useEffect(()=>{
-    window.getData.getTotal();
-    window.getTotalSuccess= (res:string)=>{
-      const obj = JSON.parse(res)
-      setList(obj)
+    window.getData.getAllByYear();
+    window.getDataSuccess= (res:allObjArr)=>{
+      setList(res)
     }
   },[])
   return (

@@ -92,12 +92,8 @@ function initIpcMain(){
     isExists(url,(err)=>{
       if(err){
         console.log(err);
-        const data = {
-          [date]: {
-            [type]:obj
-          }
-        }
-        writeData(url,JSON.stringify(data), event,'sendAddItemRes').then(res=>{
+        const dataObj = addDataObj(obj,type,date)
+        writeData(url,JSON.stringify(dataObj), event,'sendAddItemRes').then(res=>{
           if(res === '成功'){
             event.sender.send('sendAddItemRes','200');
           }
@@ -105,8 +101,8 @@ function initIpcMain(){
       }else{
         readData(url,event,'sendAddItemRes')
         .then(data=>{
-          const dataObj = JSON.parse(data)
-          dataObj[date][type] = obj
+          let dataObj = JSON.parse(data)
+          dataObj = addDataObj(obj,type,date,dataObj)
           writeData(url,JSON.stringify(dataObj), event,'sendAddItemRes').then(res=>{
             if(res === '成功'){
               event.sender.send('sendAddItemRes','200');
@@ -118,48 +114,32 @@ function initIpcMain(){
   });
   // 拿到数据
   ipcMain.on('getAllByYear',(event,str)=>{
-    const url = path.join(__dirname, `/data/${str}.txt`)
-    readData(url,event,'sendGetDataRes')
-    .then(data=>{
-      const dataObj = JSON.parse(data)
-      var arr = Object.keys(dataObj).map(key=>{
-        return dataObj[key]
-      })
-      event.sender.send('sendGetDataRes',JSON.stringify(arr));
-    })
-  })
-  // 拿到数据
-  ipcMain.on('getAllByYear',(event,str)=>{
     const url = path.join(__dirname, `/data`)
     const files = fs.readdirSync(url)
     const arr = []
     files.forEach(file => { 
       if (path.extname(file) === ".txt") {
-        const fileName = Number(file.substring(0,file.indexOf('.')))
+        const fileName = file.substring(0,file.indexOf('.'))
         arr.push(fileName)
       }
     })
-
+    if(arr.length === 0){
+      event.sender.send('sendGetDataRes',JSON.stringify([]));
+      return 
+    }
     // 函数调多少个不确定
-    // Promise.all([readData(1),readData(2),readData(3),readData(4)])
-    const txtArr = []
-    arr.forEach(name=>{
-      let urlFile = path.join(__dirname, `/data/${name}.txt`)
-      var data = fs.readFileSync(urlFile, 'utf-8');
-      txtArr.push({
-        [name]:data
+    Promise.all(arr.map(v=>{
+      let urlFile = path.join(__dirname, `/data/${v}.txt`)
+      return readData(urlFile,event,'sendGetDataRes')
+    })).then(v=>{
+      const txtArr = []
+      v.forEach((obj,i)=>{
+        txtArr.push({
+          [arr[i]]:obj
+        })
       })
+      event.sender.send('sendGetDataRes',JSON.stringify(txtArr));
     })
-    event.sender.send('sendGetDataRes',JSON.stringify(arr));
-   
-    // readData(url,event,'sendGetDataRes')
-    // .then(data=>{
-    //   const dataObj = JSON.parse(data)
-    //   var arr = Object.keys(dataObj).map(key=>{
-    //     return dataObj[key]
-    //   })
-      
-    // })
   })
   // 拿到最新的总数据
   ipcMain.on('getTotal',(event,str)=>{
@@ -172,15 +152,81 @@ function initIpcMain(){
         newDataName = num > newDataName ?  num : newDataName
       }
     })
+    if(newDataName === 0){
+      event.sender.send('sendGetTotalRes',JSON.stringify({}));
+      return 
+    }
     const fileUrl = path.join(__dirname, `/data/${newDataName}.txt`)
     readData(fileUrl,event,'sendGetTotalRes')
     .then(data=>{
       const dataObj = JSON.parse(data)
-      var arr = Object.keys(dataObj).map(key=>{
-        return dataObj[key]
+      let maxMonth = 0
+      Object.keys(dataObj).forEach(key=>{
+        const month = getMounth(key)
+        maxMonth = maxMonth > month ? maxMonth : month
       })
-      event.sender.send('sendGetTotalRes',JSON.stringify(arr));
+      const monethDataKey = `${newDataName}-${maxMonth}`
+      const lastDateData = dataObj[monethDataKey] ? dataObj[monethDataKey] : {}
+      event.sender.send('sendGetTotalRes',JSON.stringify(lastDateData));
+    })
+  })
+
+  ipcMain.on('addIncomeItem',(event,str)=>{
+    console.log('str',str);
+    const obj = JSON.parse(str)
+    const {date,type} = obj
+    const timeyear = "" + date.split('-')[0]
+    const url = path.join(__dirname, `/data/${timeyear}.txt`)
+    isExists(url,(err)=>{
+      if(err){
+        console.log(err);
+        const dataObj = addDataObj(obj,type,date)
+        writeData(url,JSON.stringify(dataObj), event,'sendAddIncomeItemRes').then(res=>{
+          if(res === '成功'){
+            event.sender.send('sendAddIncomeItemRes','200');
+          }
+        })
+      }else{
+        readData(url,event,'sendAddIncomeItemRes')
+        .then(data=>{
+          let dataObj = JSON.parse(data)
+          dataObj = addDataObj(obj,'income',date,dataObj)
+          writeData(url,JSON.stringify(dataObj), event,'sendAddIncomeItemRes').then(res=>{
+            if(res === '成功'){
+              event.sender.send('sendAddIncomeItemRes','200');
+            }
+          })
+        })
+      }
     })
   })
 }
 
+function addDataObj(obj,type,date,dataObj){
+  if(dataObj){
+    if(dataObj[date]){
+      dataObj[date][type] = obj
+    }else{
+      dataObj[date]={
+        [type]:obj
+      }
+    }
+    return dataObj
+  }else{
+    const dataObj = {
+      [date]: {
+        [type]:obj
+      }
+    }
+    return dataObj
+  }
+}
+
+function getMounth(month){
+  const arr = month.split('-')
+  if(arr[1]){
+    return Number(arr[1])
+  }else{
+    return 0
+  }
+}

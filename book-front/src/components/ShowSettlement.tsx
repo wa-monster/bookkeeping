@@ -1,48 +1,64 @@
 import React,{useState,FC,useEffect} from 'react'
 import { Button,DatePicker,DatePickerProps } from 'antd';
-import DetailBox from './SettlementComponent/DetailBox'
-import EchartsBox from './SettlementComponent/EchartsBox'
 import AddItem from './SettlementComponent/AddItem'
+import AddIncomeItem from './SettlementComponent/AddImcomeItem'
 import './ShowSettlement.scss'
 import moment from 'moment'
 import {money} from '../utils/filter'
 const useSettlement:FC<ShowSettlementType> = (props)=>{
   const [income,setIncome] = useState(0)
-  const [pay,setPay] = useState(0)
+  const [pay] = useState(0)
   const [total,setTotal] = useState(0)
+  const [month] = useState(moment().format('YYYY-MM'))
   // 
   const [isShowAdd,setIsShowAdd] = useState(false)
-  const addIncome = ()=>{
-    setIsShowAdd(true)
-  } 
-  const closeIncome = ()=>{
-    setIsShowAdd(false)
-  }
-  const saveIncome = (values:addFormObjType) => {
+  const  saveTotal= (values:addFormObjType) => {
     window.saveData.addItem(JSON.stringify(values));
     window.addItemSuccess = ()=> {
       getTotal()
-      closeIncome()
+      setIsShowAdd(false)
     }
   }
+
+  const [isCurrentReceipt,setCurrentReceipt] = useState(false)
+  const saveIncome = (values:addFormObjType)=>{
+    window.saveData.addIncomeItem(JSON.stringify(values));
+    window.addIncomeItemSuccess = ()=> {
+      getTotal()
+      setCurrentReceipt(false)
+    }
+  }
+
   // 
   // const [isDetail,setDetail] = useState(false)
   // const lookDetail = ()=>{
   //   setDetail(!isDetail)
   // }
-
-  // const [listDateStr,setListDate] = useState(moment().format('YYYY'))
   const getTotal = ()=>{
-    
     window.getData.getTotal();
     // 拿到数据回调
-    window.getTotalSuccess = (res:any)=> {
+    window.getTotalSuccess = (res:totalObj)=> {
       console.log('res',res);
-      const arr = JSON.parse(res)
-      const sum = arr.reduce((pre:number,cre:any)=>{
+      
+      const incomeObj:addFormObjType = res['income']
+      delete res['income']
+      const sum = Object.keys(res).map(key=>{
+        return res[key]
+      }).reduce((pre:number,cre:any)=>{
+        console.log('pre',pre);
+        
         return pre+cre.money
       },0)
-      setTotal(sum)
+      setTotal(sum > 0 ? sum : 0)
+      console.log('incomeObj',incomeObj);
+      
+      setIncome(incomeObj ? incomeObj.money : 0)
+    }
+  }
+  const getPreData = ()=>{
+    window.getData.getPreData();
+    window.getPreDataSuccess = ()=>{
+
     }
   }
   useEffect(() => {
@@ -54,34 +70,39 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
       <div className="reve-expend-title">统计</div>
       <div className='reve-expend-content'>
         <div className='reve-expend-content-item'>
-          <div>上次记录</div> 
+          <div>{month}收入</div> 
           <div className='income'>{money(income)}</div>
         </div>
         <div className='reve-expend-content-item'>
-          <div>支出</div> 
+          <div>上次</div> 
           <div className='pay'>{money(pay)}</div>
         </div>
         <div className='reve-expend-content-item'>
-          <div>总计</div> 
-          <div>{money(total)}</div>
-        </div>
+          <div>{month}总计</div> 
+          <div>{money(total)}</div> 
+        </div> 
       </div>
-      {/* <div style={{"margin":"20px 0"}}>
-        <DatePicker 
-          defaultValue={moment()}
-          onChange={(...[,dataString]:[value: moment.Moment | null, dateString: string])=>setListDate(dataString)} 
-          picker="year" 
-        />
-      </div> */}
       <div className="add">
         {isShowAdd ?
-          <Button onClick={closeIncome}>关闭</Button>
+          <Button onClick={()=>setIsShowAdd(false)}>关闭</Button>
           :
-          <Button onClick={addIncome}>新增</Button> 
+          <Button onClick={()=>setIsShowAdd(true)}>统计当前资产</Button> 
         }
       </div>
       {isShowAdd ?
-        <AddItem saveIncome={saveIncome}></AddItem>
+        <AddItem saveTotal={saveTotal}></AddItem>
+        :
+        null
+      }
+      <div className="add">
+        {isCurrentReceipt ?
+          <Button onClick={()=>setCurrentReceipt(false)}>关闭</Button>
+          :
+          <Button onClick={()=>setCurrentReceipt(true)}>目前进账</Button> 
+        }
+      </div>
+      {isCurrentReceipt?
+        <AddIncomeItem saveIncome={saveIncome}></AddIncomeItem>
         :
         null
       }

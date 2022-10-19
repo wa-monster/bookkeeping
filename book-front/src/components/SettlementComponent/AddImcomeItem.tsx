@@ -1,52 +1,25 @@
 import React,{ useState,FC } from 'react'
-import { DatePicker,DatePickerProps , Form, InputNumber, Button, Select } from 'antd';
+import { DatePicker,DatePickerProps , Form, InputNumber, Button, Input } from 'antd';
 import moment from 'moment'
-import  './AddItem.scss'
 import { FormProps } from 'rc-field-form';
-const AddItem:FC<AddItemType> = (props)=>{
+import  './AddItem.scss'
+
+const AddImcomeItem:FC<AddIncomeItemType> = (props) =>{
+
   const [form] = Form.useForm();
   const onFinish:FormProps['onFinish'] = (values)=>{
     const formData = {
-      ...values
+      ...values,
+      isIncome:true,
     }
     formData.date = moment(formData.date).format('YYYY-MM');
-    props.saveTotal(formData)
+    props.saveIncome(formData)
   }
 
   const onChange: DatePickerProps['onChange'] = (date, dateString)=>{
 
   }
-  const moneyOption =[
-    {
-      label:'支付宝',
-      value:1
-    },
-    {
-      label:'微信',
-      value:2
-    },
-    {
-      label:'招商银行',
-      value:3
-    },
-    {
-      label:'现钱',
-      value:4
-    },
-    {
-      label:'基金',
-      value:5
-    },
-    {
-      label:'借钱',
-      value:6
-    }
-  ]
-  const { Option } = Select;
-  const optionChildren:React.ReactNode[] = []
-  moneyOption.forEach(v=>{
-    optionChildren.push(<Option value={v.value} key={v.value}>{v.label}</Option>) 
-  })
+
   return (
     <div className='add-form-box'>
       <Form 
@@ -57,20 +30,18 @@ const AddItem:FC<AddItemType> = (props)=>{
         initialValues={{
           date:moment(moment(),'YYYY-MM'),
           money:0,
-          type:1
+          incomeType:'工资'
         }}
       >
         <Form.Item name="date" label="日期">
           <DatePicker onChange={onChange} picker="month" format="YYYY-MM"/>
         </Form.Item>
-        <Form.Item name="type" label="类型">
-          <Select  style={{ width: 200 }}>
-            { optionChildren }
-          </Select>
+        <Form.Item name="incomeType" label="类型">
+          <Input></Input>
         </Form.Item>
         <Form.Item
           name="money"
-          label="余额"
+          label="进账"
           getValueFromEvent={(...args: any[]) => {
             if(!args[0]){
               return 0
@@ -91,4 +62,5 @@ const AddItem:FC<AddItemType> = (props)=>{
     </div>
   )
 }
-export default AddItem
+
+export default AddImcomeItem
