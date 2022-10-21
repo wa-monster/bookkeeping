@@ -172,7 +172,6 @@ function initIpcMain(){
   })
 
   ipcMain.on('addIncomeItem',(event,str)=>{
-    console.log('str',str);
     const obj = JSON.parse(str)
     const {date,type} = obj
     const timeyear = "" + date.split('-')[0]
@@ -199,6 +198,28 @@ function initIpcMain(){
         })
       }
     })
+  })
+
+  ipcMain.on('getPreData',(event,str)=>{
+    const yAndMArr = str.split('-')
+    const urlFile = path.join(__dirname, `/data/${yAndMArr[0]}.txt`)
+    isExists(urlFile,(err)=>{
+      if(err){
+        event.sender.send('sendPreData',JSON.stringify({}));
+      }
+      readData(urlFile,event,'sendPreData')
+      .then((res)=>{
+        const data = JSON.parse(res)
+        let preObj
+        Object.keys(data).forEach(key=>{
+          if(key === yAndMArr[1]){
+            preObj = data[key]
+          }
+        })
+        event.sender.send('sendPreData',JSON.stringify(preObj));
+      })
+    })
+   
   })
 }
 

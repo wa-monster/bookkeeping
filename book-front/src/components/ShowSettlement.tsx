@@ -57,12 +57,14 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   }
   const getPreData = ()=>{
     window.getData.getPreData();
-    window.getPreDataSuccess = ()=>{
-
+    window.getPreDataSuccess = (res:addFormObjType)=>{
+      console.log('wwwww');
+      
     }
   }
   useEffect(() => {
     getTotal()
+    getPreData()
   }, [])
   
   return (
