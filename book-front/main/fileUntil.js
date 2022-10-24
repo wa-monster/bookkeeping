@@ -1,42 +1,41 @@
 const fs = require('fs')
 
-const isExists = (url,callback)=>{
-  fs.access(url, fs.constants.F_OK, err => {
-    callback(err)
-  })
-}
-const writeData = (url,data,event,targetFn)=>{
-  return new Promise((res,rej)=>{
-    fs.writeFile(url,data,(error)=>{
-      if(error){
-        if(targetFn){
-        event.sender.send(targetFn,'500')
-        }
-        rej(error)
-        return false;
+// 
+const isExists = (url)=>{
+  return new Promise((res)=>{
+    fs.access(url, fs.constants.F_OK, err => {
+      if(err){
+        res(err)
+      }else{
+        res()
       }
-      res('成功')
     })
   })
 }
-const readData = (url,event,targetFn)=>{
+const writeData = (url,data)=>{
+  return new Promise((res,rej)=>{
+    fs.writeFile(url,data,(err)=>{
+      if(err){
+        rej({isError:200,err})
+      }else{
+        res()
+      }
+    })
+  })
+}
+const readData = (url)=>{
   return new Promise((res,rej)=>{
     fs.readFile(url, 'utf8', (err, data) => {
       // 读取成功 err为null
       // 读取失败 err为错误对象
       if (err){
-        console.log('err',url);
-        console.log(err);
-        if(targetFn){
-         event.sender.send(targetFn,'500')
-        }
-        rej(err) 
+        rej({isError:200,err}) 
+      }else{
+        res(data)
       }
-      res(data)
     })
   })
 }
-
 module.exports = {
   isExists,
   writeData,

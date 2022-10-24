@@ -84,142 +84,120 @@ app.whenReady().then(() => {
 })
 
 function initIpcMain(){
-  ipcMain.on('addItem',(event,str)=>{
-    const obj = JSON.parse(str)
-    const {date,type} = obj
-    const timeyear = "" + date.split('-')[0]
-    const url = path.join(__dirname, `/data/${timeyear}.txt`)
-    isExists(url,(err)=>{
-      if(err){
-        console.log(err);
-        const dataObj = addDataObj(obj,type,date)
-        writeData(url,JSON.stringify(dataObj), event,'sendAddItemRes').then(res=>{
-          if(res === '成功'){
-            event.sender.send('sendAddItemRes','200');
-          }
-        })
+  ipcMain.on('addItem',async (event,str)=>{
+    try {
+      const obj = JSON.parse(str)
+      const {date,type} = obj
+      const timeyear = "" + date.split('-')[0]
+      const url = path.join(__dirname, `/data/${timeyear}.txt`)
+      const isExistsErr = await isExists(url)
+      let dataObj 
+      if(isExistsErr){
+        dataObj = addDataObj(obj,type,date,dataObj)
       }else{
-        readData(url,event,'sendAddItemRes')
-        .then(data=>{
-          let dataObj = JSON.parse(data)
-          dataObj = addDataObj(obj,type,date,dataObj)
-          writeData(url,JSON.stringify(dataObj), event,'sendAddItemRes').then(res=>{
-            if(res === '成功'){
-              event.sender.send('sendAddItemRes','200');
-            }
-          })
-        })
+        const readRes = await readData(url)
+        dataObj = JSON.parse(readRes)
       }
-    })
+      await writeData(url,JSON.stringify(dataObj))
+      event.sender.send('sendAddItemRes','200');
+    } catch (error) {
+      event.sender.send('sendAddItemRes','500');
+    }
   });
   // 拿到数据
-  ipcMain.on('getAllByYear',(event,str)=>{
-    const url = path.join(__dirname, `/data`)
-    const files = fs.readdirSync(url)
-    const arr = []
-    files.forEach(file => { 
-      if (path.extname(file) === ".txt") {
-        const fileName = file.substring(0,file.indexOf('.'))
-        arr.push(fileName)
-      }
-    })
-    if(arr.length === 0){
-      event.sender.send('sendGetDataRes',JSON.stringify([]));
-      return 
-    }
-    // 函数调多少个不确定
-    Promise.all(arr.map(v=>{
-      let urlFile = path.join(__dirname, `/data/${v}.txt`)
-      return readData(urlFile,event,'sendGetDataRes')
-    })).then(v=>{
-      const txtArr = []
-      v.forEach((obj,i)=>{
-        txtArr.push({
-          [arr[i]]:obj
-        })
+  ipcMain.on('getAllByYear',async (event)=>{
+    try {
+      const url = path.join(__dirname, `/data`)
+      const files = fs.readdirSync(url), arr = [], txtArr = []
+      files.forEach(file => { 
+        if (path.extname(file) === ".txt") {
+          const fileName = file.substring(0,file.indexOf('.'))
+          arr.push(fileName)
+        }
       })
-      event.sender.send('sendGetDataRes',JSON.stringify(txtArr));
-    })
+      if(arr.length > 0){
+        // 函数调多少个不确定
+        const dataArr = await Promise.all(arr.map(v=>{
+          let urlFile = path.join(__dirname, `/data/${v}.txt`)
+          return readData(urlFile)
+        }))
+        dataArr.forEach((obj,i)=>{txtArr.push({[arr[i]]:obj})})
+        event.sender.send('sendGetDataRes',JSON.stringify(txtArr));
+      }else{
+        event.sender.send('sendGetDataRes',JSON.stringify([]));
+      }
+    } catch (error) {
+      event.sender.send('sendGetDataRes','500');
+    }
   })
   // 拿到最新的总数据
-  ipcMain.on('getTotal',(event,str)=>{
-    const url = path.join(__dirname, `/data`)
-    const files = fs.readdirSync(url)
-    let newDataName = 0
-    files.forEach(file => { 
-      if (path.extname(file) === ".txt") {
-        const num = Number(file.substring(0,file.indexOf('.')))
-        newDataName = num > newDataName ?  num : newDataName
-      }
-    })
-    if(newDataName === 0){
-      event.sender.send('sendGetTotalRes',JSON.stringify({}));
-      return 
-    }
-    const fileUrl = path.join(__dirname, `/data/${newDataName}.txt`)
-    readData(fileUrl,event,'sendGetTotalRes')
-    .then(data=>{
-      const dataObj = JSON.parse(data)
-      let maxMonth = 0
-      Object.keys(dataObj).forEach(key=>{
-        const month = getMounth(key)
-        maxMonth = maxMonth > month ? maxMonth : month
+  ipcMain.on('getTotal',async (event,str)=>{
+    try {
+      const url = path.join(__dirname, `/data`)
+      const files = fs.readdirSync(url)
+      let newDataName = 0
+      files.forEach(file => { 
+        if (path.extname(file) === ".txt") {
+          const num = Number(file.substring(0,file.indexOf('.')))
+          newDataName = num > newDataName ?  num : newDataName
+        }
       })
-      const monethDataKey = `${newDataName}-${maxMonth}`
-      const lastDateData = dataObj[monethDataKey] ? dataObj[monethDataKey] : {}
-      event.sender.send('sendGetTotalRes',JSON.stringify(lastDateData));
-    })
-  })
-
-  ipcMain.on('addIncomeItem',(event,str)=>{
-    const obj = JSON.parse(str)
-    const {date,type} = obj
-    const timeyear = "" + date.split('-')[0]
-    const url = path.join(__dirname, `/data/${timeyear}.txt`)
-    isExists(url,(err)=>{
-      if(err){
-        console.log(err);
-        const dataObj = addDataObj(obj,type,date)
-        writeData(url,JSON.stringify(dataObj), event,'sendAddIncomeItemRes').then(res=>{
-          if(res === '成功'){
-            event.sender.send('sendAddIncomeItemRes','200');
-          }
+      if(newDataName !== 0){
+        const fileUrl = path.join(__dirname, `/data/${newDataName}.txt`)
+        const data = await readData(fileUrl)
+        const dataObj = JSON.parse(data)
+        let maxMonth = 0
+        Object.keys(dataObj).forEach(key=>{
+          const month = getMounth(key)
+          maxMonth = maxMonth > month ? maxMonth : month
         })
+        const monethDataKey = `${newDataName}-${maxMonth}`
+        const lastDateData = dataObj[monethDataKey] ? dataObj[monethDataKey] : {}
+        event.sender.send('sendGetTotalRes',JSON.stringify(lastDateData));
       }else{
-        readData(url,event,'sendAddIncomeItemRes')
-        .then(data=>{
-          let dataObj = JSON.parse(data)
-          dataObj = addDataObj(obj,'income',date,dataObj)
-          writeData(url,JSON.stringify(dataObj), event,'sendAddIncomeItemRes').then(res=>{
-            if(res === '成功'){
-              event.sender.send('sendAddIncomeItemRes','200');
-            }
-          })
-        })
+        event.sender.send('sendGetTotalRes',JSON.stringify({}));
       }
-    })
+    } catch (error) {
+      event.sender.send('sendGetTotalRes','500');
+    }
   })
 
-  ipcMain.on('getPreData',(event,str)=>{
-    const yAndMArr = str.split('-')
-    const urlFile = path.join(__dirname, `/data/${yAndMArr[0]}.txt`)
-    isExists(urlFile,(err)=>{
-      if(err){
+  ipcMain.on('addIncomeItem',async (event,str)=>{
+    try {
+      const obj = JSON.parse(str)
+      const {date,type} = obj
+      const timeyear = "" + date.split('-')[0]
+      const url = path.join(__dirname, `/data/${timeyear}.txt`)
+      const isExistsErr = await isExists(url)
+      if(isExistsErr){
+        const dataObj = addDataObj(obj,type,date)
+        await writeData(url,JSON.stringify(dataObj), event,'sendAddIncomeItemRes')
+      }else{
+        const data = await readData(url,event,'sendAddIncomeItemRes')
+        let dataObj = JSON.parse(data)
+        dataObj = addDataObj(obj,'income',date,dataObj)
+        await writeData(url,JSON.stringify(dataObj), event,'sendAddIncomeItemRes')
+      }
+      event.sender.send('sendAddIncomeItemRes','200');
+    } catch (error) {
+      event.sender.send('sendAddIncomeItemRes','500');
+    }
+  })
+
+  ipcMain.on('getPreData',async (event,)=>{
+    try {
+      const urlFile = path.join(__dirname, `/data/pre.txt`)
+      const isExistsErr = await isExists(urlFile)
+      if(!isExistsErr){
+        const readRes = readData(urlFile)
+        const data = JSON.parse(readRes)
+        event.sender.send('sendPreData',JSON.stringify(data));
+      }else{
         event.sender.send('sendPreData',JSON.stringify({}));
       }
-      readData(urlFile,event,'sendPreData')
-      .then((res)=>{
-        const data = JSON.parse(res)
-        let preObj
-        Object.keys(data).forEach(key=>{
-          if(key === yAndMArr[1]){
-            preObj = data[key]
-          }
-        })
-        event.sender.send('sendPreData',JSON.stringify(preObj));
-      })
-    })
-   
+    } catch (error) {
+      event.sender.send('sendPreData','500');
+    }
   })
 }
 
