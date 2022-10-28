@@ -84,6 +84,7 @@ app.whenReady().then(() => {
 })
 
 function initIpcMain(){
+  // 新增某月的某个选项的剩余
   ipcMain.on('addItem',async (event,str)=>{
     try {
       const obj = JSON.parse(str)
@@ -161,7 +162,7 @@ function initIpcMain(){
       event.sender.send('sendGetTotalRes','500');
     }
   })
-
+  // 新增收入
   ipcMain.on('addIncomeItem',async (event,str)=>{
     try {
       const obj = JSON.parse(str)

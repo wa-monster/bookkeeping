@@ -49,3 +49,11 @@ declare interface totalObj {
 }
 
 type allObjArr = totalObj[]
+
+declare type vType = {
+  [key: string]: string;
+  [key: number]: string;
+}
+declare type obj = {
+  [key: string]: any;
+}

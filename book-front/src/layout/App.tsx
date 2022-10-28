@@ -5,16 +5,19 @@ import './App.scss'
 import myContext from 'src/utils/context'
 
 function App() {
-  const [List,setList] = useState({})
-  useEffect(()=>{
+  const [List,setList] = useState<allObjArr>([])
+  const getList = ()=>{
     window.getData.getAllByYear();
     window.getDataSuccess= (res:allObjArr)=>{
       setList(res)
     }
+  }
+  useEffect(()=>{
+    getList()
   },[])
   return (
     <div className="App">
-      <myContext.Provider value={{ List }}>
+      <myContext.Provider value={{ List,getList }}>
         <YangHeader></YangHeader>
         <div className="main-content">
           <div className="bg-top"></div>
