@@ -24,7 +24,7 @@ function createWindow () {
     width: 900,
     height: 700,
     webPreferences: {
-      devTools:false,
+      // devTools:false,
       webSecurity:false,
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
@@ -107,10 +107,10 @@ function initIpcMain(){
       const isExistsErr = await isExists(url)
       let dataObj 
       if(isExistsErr){
-        dataObj = addDataObj(obj,type,date,dataObj)
+        dataObj = addDataObj(obj,type,date)
       }else{
         const readRes = await readData(url)
-        dataObj = JSON.parse(readRes)
+        dataObj = addDataObj(obj,type,date,JSON.parse(readRes))
       }
       await writeData(url,JSON.stringify(dataObj))
       event.sender.send('sendAddItemRes','200');
