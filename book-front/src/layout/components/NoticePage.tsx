@@ -2,6 +2,7 @@ import React,{FC} from 'react'
 import { Tabs } from 'antd';
 import { NoticePageType } from '../../type/layout'
 import ShowSettlement from '../../components/ShowSettlement'
+import DetailList from 'src/components/DetailList/DetailList'
 import './NoticePage.scss'
 import { TabPanekey } from '../../utils/enum'
 const { TabPane } = Tabs;
@@ -17,12 +18,12 @@ const NoticePage:FC<NoticePageType> = () =>{
           <TabPane tab="周" key={TabPanekey.week}>
             <ShowSettlement keyIndex={TabPanekey.week}/>
           </TabPane> */}
-          <TabPane tab="月" key={TabPanekey.mouth}>
+          <TabPane tab="总计" key={TabPanekey.mouth}>
             <ShowSettlement keyIndex={TabPanekey.mouth}/>
           </TabPane>
-          {/* <TabPane tab="年" key={TabPanekey.year}>
-            <ShowSettlement keyIndex={TabPanekey.year}/>
-          </TabPane> */}
+          <TabPane tab="详细" key={TabPanekey.year}>
+            <DetailList keyIndex={TabPanekey.year}/>
+          </TabPane>
         </Tabs>
       </div>
     </div>

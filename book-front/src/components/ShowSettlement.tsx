@@ -6,7 +6,8 @@ import './ShowSettlement.scss'
 import moment from 'moment'
 import {money} from '../utils/filter'
 import myContext from 'src/utils/context'
-const useSettlement:FC<ShowSettlementType> = (props)=>{
+import {doParseList} from 'src/utils/filter'
+const ShowSettlement:FC<ShowSettlementType> = (props)=>{
   const {List,getList} = React.useContext(myContext)
   
   const [income,setIncome] = useState(0)
@@ -16,21 +17,22 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   // 
   const [isShowAdd,setIsShowAdd] = useState(false)
   const  saveTotal= (values:addFormObjType) => {
-    window.saveData.addItem(JSON.stringify(values));
     window.addItemSuccess = ()=> {
       getTotal()
       getList()
       setIsShowAdd(false)
     }
+    window.saveData.addItem(JSON.stringify(values));
+
   }
 
   const [isCurrentReceipt,setCurrentReceipt] = useState(false)
   const saveIncome = (values:addFormObjType)=>{
-    window.saveData.addIncomeItem(JSON.stringify(values));
     window.addIncomeItemSuccess = ()=> {
       getTotal()
       setCurrentReceipt(false)
     }
+    window.saveData.addIncomeItem(JSON.stringify(values));
   }
 
   // 
@@ -39,11 +41,8 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
   //   setDetail(!isDetail)
   // }
   const getTotal = ()=>{
-    window.getData.getTotal();
     // 拿到数据回调
     window.getTotalSuccess = (res:totalObj)=> {
-      console.log('res',res);
-      
       const incomeObj:addFormObjType = res['income']
       delete res['income']
       const sum = Object.keys(res).map(key=>{
@@ -58,23 +57,22 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
       
       setIncome(incomeObj ? incomeObj.money : 0)
     }
+    window.getData.getTotal();
+
   }
 
   const getPreData = (List:any)=>{
-    const listObj:obj={}
+    const listObj:listObj= doParseList(List)
     let preTotal = 0
-    List.forEach((v:vType)=>{
-      Object.keys(v).forEach(key=>{
-        const data:obj = JSON.parse(v[key])
-        listObj[key] = data
-      })
-    })
     let lastNum = searchNewTimeTotal(listObj)
     const cloneListObj = JSON.parse(JSON.stringify(listObj))
     const cloneListObjY = cloneListObj[lastNum.maxY]
     if(cloneListObjY&&cloneListObjY[lastNum.lastDate]){
       delete cloneListObjY[lastNum.lastDate]
       const preNum = searchNewTimeTotal(cloneListObj)
+      if(preNum.maxY === 0){
+        return 
+      }
       const preObj = cloneListObj[preNum.maxY][preNum.lastDate]
       console.log(preNum.lastDate);
       console.log(cloneListObj[preNum.maxY]);
@@ -128,15 +126,15 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
       <div className="reve-expend-title">统计</div>
       <div className='reve-expend-content'>
         <div className='reve-expend-content-item'>
-          <div>{month}收入</div> 
+          <div>{month}月份收入总计 </div> 
           <div className='income'>{money(income)}</div>
         </div>
         <div className='reve-expend-content-item'>
-          <div>上次</div> 
+          <div>上次资产总计</div> 
           <div className='preTotal'>{money(preTotal)}</div>
         </div>
         <div className='reve-expend-content-item'>
-          <div>{month}总计</div> 
+          <div>{month}资产总计</div> 
           <div>{money(total)}</div> 
         </div> 
       </div>
@@ -173,4 +171,4 @@ const useSettlement:FC<ShowSettlementType> = (props)=>{
     </div>
   )
 }
-export default useSettlement
+export default ShowSettlement

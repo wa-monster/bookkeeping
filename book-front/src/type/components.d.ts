@@ -35,18 +35,15 @@ declare interface AddItemType {
 declare interface AddIncomeItemType {
   saveIncome: (addFormObjType) => void
 }
-
 declare interface addFormObjType {
   date: string,
   money: number,
-  type?: number,
+  type?: typeNum,
   incomeType?: string,
   isIncome?: boolean
 }
 
-declare interface totalObj {
-  [key: string]: addFormObjType;
-}
+declare type totalObj = Record<string, addFormObjType>
 
 type allObjArr = totalObj[]
 
@@ -56,4 +53,42 @@ declare type vType = {
 }
 declare type obj = {
   [key: string]: any;
+}
+
+type toPropString<T> = {
+  [key in keyof T]: string;
+}
+
+/** 一个双层对象 第一层为对象第二层是数字或者字符串 */
+/**
+ * {
+ *  '2022':{
+ *  '2022-10'：{
+ *    '1'：{
+ *      date:'',
+ *    }
+ *    }
+ *  }
+ * }
+ * 
+ * */
+declare type listObj = Record<string | number, Record<string, Record<string, addFormObjType>>>
+
+declare type objByStr = Record<string, string>
+
+declare type typeNum = 1 | 2 | 3 | 4 | 5 | 6
+
+type moneyType = 'zfb' | 'wx' | 'zsyh' | 'xq' | 'jj' | 'jq'
+
+interface tableType {
+  date: string;
+  key: string;
+  income: number;
+  total: number;
+  zfb: number;
+  wx: number;
+  zsyh: number;
+  xq: number;
+  jj: number;
+  jq: number;
 }

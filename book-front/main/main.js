@@ -24,6 +24,7 @@ function createWindow () {
     width: 900,
     height: 700,
     webPreferences: {
+      devTools:false,
       webSecurity:false,
       nodeIntegration: true,
       preload: path.join(__dirname, 'preload.js')
@@ -42,10 +43,20 @@ function createWindow () {
   }
   
   initAddBack(mainWindow)
-
+  initData()
   initIpcMain()
+
 }
 
+async function initData(){
+  const absPath = path.resolve(__dirname, '../../data');
+  try {
+      await fs.promises.stat(absPath)
+  } catch (e) {
+      // 不存在文件夹，直接创建 {recursive: true} 这个配置项是配置自动创建多个文件夹
+      await fs.promises.mkdir(absPath, {recursive: true})
+  }
+}
 function initAddBack(mainWindow){
   let tray
   const iconPath = path.join(__dirname, `${baseUrl}/static/icon.png`)
@@ -81,6 +92,8 @@ app.whenReady().then(() => {
   app.on('window-all-closed', function () {
     if (process.platform !== 'darwin') app.quit()
   })
+
+
 })
 
 function initIpcMain(){
@@ -90,7 +103,7 @@ function initIpcMain(){
       const obj = JSON.parse(str)
       const {date,type} = obj
       const timeyear = "" + date.split('-')[0]
-      const url = path.join(__dirname, `/data/${timeyear}.txt`)
+      const url = path.join(__dirname, `../../data/${timeyear}.txt`)
       const isExistsErr = await isExists(url)
       let dataObj 
       if(isExistsErr){
@@ -108,7 +121,7 @@ function initIpcMain(){
   // 拿到数据
   ipcMain.on('getAllByYear',async (event)=>{
     try {
-      const url = path.join(__dirname, `/data`)
+      const url = path.join(__dirname, `../../data`)
       const files = fs.readdirSync(url), arr = [], txtArr = []
       files.forEach(file => { 
         if (path.extname(file) === ".txt") {
@@ -119,7 +132,7 @@ function initIpcMain(){
       if(arr.length > 0){
         // 函数调多少个不确定
         const dataArr = await Promise.all(arr.map(v=>{
-          let urlFile = path.join(__dirname, `/data/${v}.txt`)
+          let urlFile = path.join(__dirname, `../../data/${v}.txt`)
           return readData(urlFile)
         }))
         dataArr.forEach((obj,i)=>{txtArr.push({[arr[i]]:obj})})
@@ -134,7 +147,7 @@ function initIpcMain(){
   // 拿到最新的总数据
   ipcMain.on('getTotal',async (event,str)=>{
     try {
-      const url = path.join(__dirname, `/data`)
+      const url = path.join(__dirname, `../../data`)
       const files = fs.readdirSync(url)
       let newDataName = 0
       files.forEach(file => { 
@@ -144,7 +157,7 @@ function initIpcMain(){
         }
       })
       if(newDataName !== 0){
-        const fileUrl = path.join(__dirname, `/data/${newDataName}.txt`)
+        const fileUrl = path.join(__dirname, `../../data/${newDataName}.txt`)
         const data = await readData(fileUrl)
         const dataObj = JSON.parse(data)
         let maxMonth = 0
@@ -168,7 +181,7 @@ function initIpcMain(){
       const obj = JSON.parse(str)
       const {date,type} = obj
       const timeyear = "" + date.split('-')[0]
-      const url = path.join(__dirname, `/data/${timeyear}.txt`)
+      const url = path.join(__dirname, `../../data/${timeyear}.txt`)
       const isExistsErr = await isExists(url)
       if(isExistsErr){
         const dataObj = addDataObj(obj,type,date)
@@ -187,7 +200,7 @@ function initIpcMain(){
 
   ipcMain.on('getPreData',async (event,)=>{
     try {
-      const urlFile = path.join(__dirname, `/data/pre.txt`)
+      const urlFile = path.join(__dirname, `../../data/pre.txt`)
       const isExistsErr = await isExists(urlFile)
       if(!isExistsErr){
         const readRes = readData(urlFile)

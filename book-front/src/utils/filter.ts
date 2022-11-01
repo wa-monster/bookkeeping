@@ -11,3 +11,14 @@ export const enum2arr = (valueEnum: any[] | Record<string, any>) => {
   }
   return values;
 }
+
+export const doParseList = (List: any[]) => {
+  const listObj: obj = {}
+  List.forEach((v: vType) => {
+    Object.keys(v).forEach(key => {
+      const data: obj = JSON.parse(v[key])
+      listObj[key] = data
+    })
+  })
+  return listObj
+}

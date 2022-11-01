@@ -54,8 +54,8 @@ export const initElectronRes = () => {
       saveResSuccess()
       const data = JSON.parse(res)
       // 调用react 的函数
-      window.getTotalSuccess(data)
-      window.getTotalSuccess = null;
+      window.addIncomeItemSuccess(data)
+      window.addIncomeItemSuccess = null;
     }
   })
   // 
